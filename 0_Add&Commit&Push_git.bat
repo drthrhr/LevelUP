@@ -11,8 +11,6 @@ set info=%~1
 set message=%prefix% %info%
 
 :: 执行git同步
-C:
-cd C:/LevelUP
 git add .
 git commit -m "%message%"
 git push
