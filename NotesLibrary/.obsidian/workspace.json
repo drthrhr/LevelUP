@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "eeddea79629a38de",
+        "id": "2dbacb70e4b3c040",
         "type": "tabs",
         "children": [
           {
-            "id": "1bce04e26f68c56b",
+            "id": "d1973ed5e6667e85",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -142,7 +142,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "欢迎.md",
+                "file": "test/欢迎.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -151,12 +151,12 @@
               "title": "欢迎 的大纲"
             }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -168,12 +168,12 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "1bce04e26f68c56b",
+  "active": "6b5095deef04d8dc",
   "lastOpenFiles": [
+    "test/创建链接.md",
+    "test/欢迎.md",
     "test/assets/Pasted image 20250617210532.png",
     "test/assets",
-    "test/欢迎.md",
-    "test/创建链接.md",
     "attachments/Pasted image 20250617205130.png",
     "attachments",
     "Pasted image 20250617204229.png",
