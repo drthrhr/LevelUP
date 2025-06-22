@@ -200,3 +200,96 @@ int main()
 }
 ```
 
+### 使用`using namespace`将命名空间全部展开
+
+如：
+
+```c++
+using namespace tx;	//将命名空间全部展开，即把tx这个命名空间定义的东西放出来
+
+int main()
+{
+	struct List::Node* n1; //访问List.h文件中的Node
+	struct Queue::Node* n2;//访问Queue.h文件中的Node
+}
+```
+
+也可以再拆一层，如下：
+
+```c++
+//展开时要注意tx和List的顺序不能颠倒
+using namespace tx;
+using namespace List;
+
+int main()
+{
+	struct Node* n1; //访问List.h文件中的Node
+	struct Queue::Node* n2;//访问Queue.h文件中的Node
+}
+```
+
+这种访问方式是可以达到简化效果，但是也会存在一定风险：命名空间全部释放又重新回到命名冲突。如：
+
+![img](M:\LevelUP\NotesLibrary\CPP\assets\0f609799d6cd32a1f7e7469a2ad66671.png)
+
+### 使用`using`将命名空间中成员展开
+
+如针对上述代码，可以只把n1中的f放出来：
+
+```c++
+namespace n1
+{
+	int f = 0;
+	int rand = 0;
+}
+using n1::f;
+
+int main()
+{
+	f += 2;
+	printf("%d\n", f);
+	n1::rand += 2;
+	printf("%d\n", n1::rand);
+}
+```
+
+------
+
+### （常用的示例）
+
+以C++的标准库命名空间std为例，使用上述三种方法的示例分别为：
+
+1. 使用域作用限定符::访问命名空间中的成员
+
+   ```c++
+   #include<iostream>
+   using namespace std; //std 是封C++库的命名空间
+   int main()
+   {
+   	cout << "hello world" << endl; // hello world
+   	return 0;
+   }
+   ```
+
+2. 使用`using namespace`将命名空间全部展开
+
+   ```c++
+   #include<iostream>
+   int main()
+   {
+   	std::cout << "hello world" << std::endl;
+   	return 0;
+   }
+   ```
+
+3. 使用`using`将命名空间中成员展开
+
+   ```c++
+   #include<iostream>
+   using std::cout;
+   int main()
+   {
+   	cout << "hello world" << std::endl;
+   	return 0;
+   }
+   ```
