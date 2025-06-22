@@ -334,5 +334,5 @@
   "viewTypeSettings": {},
   "toolbarBackgroundColor": "rgba(var(--background-secondary-rgb), 0.7)",
   "toolbarIconColor": "var(--text-normal)",
-  "toolbarIconSize": 20
+  "toolbarIconSize": 18
 }
