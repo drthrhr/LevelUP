@@ -334,3 +334,120 @@ int main(void)
 
 1. [向函数传递参数](https://zhuanlan.zhihu.com/p/659450002)的时候传递引用比较方便；
 2.  [操作符重载](https://zhuanlan.zhihu.com/p/262508774)的时候返回引用可以实现连续调用；
+
+# 标准输入输出
+
+输出好理解，就是cout呗，可以参考[1.2.1 输出变量(cout与endl换行显示) - 知乎](https://zhuanlan.zhihu.com/p/659417617)
+
+这里的查漏补缺主要是输入，有关不同的输入方式与换行符的读取。
+
+## 标准输入
+
+### cin
+
+`std::cin` 就能从输入缓冲区中获得到非空的一行。注意：
+
+- 空行、空格、tab等均不会被获取到。
+- 不会删除输入缓冲区中的空行（也就是说比如输入完【111\n】之后，用cin只会获取到`111`，还会在输入缓冲区中留下一个`\n`）
+- 可以连着用 `>>` 赋值给多个变量，对应地，程序也会阻塞等待对应数量的非空行输入完毕
+
+比如：
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+	string line1, line2;
+
+	/* 输入： \n\n  \n111 \n\n   \n  \t 222\n （\n代表回车；\t代表tab键） */
+	cin >> line1 >> line2;	// line1 = "111", line2 = "222"
+	return 0;
+}
+```
+
+### getline
+
+`std::getline` 用于从输入流（如`std::cin`或文件流）中读取一行文本，并将其存储到一个`std::string`对象中。
+
+注意点：
+
+- 可以读取包含空格、tab的整行输入
+- 在输入缓冲区中读取，遇到\n（即默认的分隔符字符）就会停止读取，并且会把所遇到的那个\n从输入缓冲区中删掉
+
+函数原型与说明：
+
+- ```cpp
+  istream& getline(istream& is, string& str);
+  istream& getline(istream& is, string& str, char delim);
+  ```
+
+- `is`: 输入流对象（如 `std::cin` 或文件流）。
+- `str`: 用于存储读取到的字符串的 `std::string` 对象。
+- `delim` (可选): 分隔符字符，默认为换行符（`'\n'`）。当遇到该字符时，读取停止。
+- 其返回值是一个输入流对象 `is`，支持链式调用。
+
+比如：
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+	string line1, line2;
+
+	/* 输入：\t  \t   111  \t\n\n222（\t代表tab；\n代表回车）*/
+	getline(cin, line1);	// line1 = "\t  \t   111  \t"
+	getline(cin, line2);	// line2 = ""
+	return 0;
+}
+```
+
+### 混用cin与getline
+
+由于cin、getline的上述特性，因此在混用cin与getline时要注意可能残存在输入缓冲区中的\n。
+
+比如：
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+	cout << "Hello CMake." << endl;
+	string line1, line2;
+
+	/* 输入:111\n222 （\n代表回车） */
+	getline(cin, line1);	// line1 = "111"
+	cin >> line2;	// line2 = "222"
+
+	return 0;
+}
+```
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main()
+{
+	cout << "Hello CMake." << endl;
+
+	string line1, line2;
+
+	/* 输入:111\n222 （\n代表回车）（实际上输入完111\n就执行完这两条语句了） */
+	cin >> line1;	// line1 = "111"
+	getline(cin, line2);	// line2 = ""
+
+	return 0;
+}
+```
+
+为避免cin后残存在缓冲区的\n对后续getline造成影响，可用 `std::cin.ignore()` 来清除缓冲区，再用getline。
