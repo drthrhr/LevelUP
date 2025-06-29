@@ -58,6 +58,118 @@ int i = static_cast<int>( 100 / 3.0);
 
 `static_cast<目标类型>(表达式)`：用于安全地进行类型转换。比如：浮点数转整数（如本例）、整数转浮点数、父类指针转子类指针（有继承关系时）。注意static_cast 不会做运行时类型检查，转换时只做语法检查；且转换时可能会丢失精度（如本例的小数部分被截断）。
 
+# 模板
+
+在 C++11 和之前的版本中模板主要分成两种，一种是函数模板，另一种是类模板。
+
+函数模板是通过模板定义关键字 **`template`** 和泛型参数来定义的，这些泛型参数可以在用来修饰函数的参数列表、返回类型或函数体中使用。
+
+类模板是通过模板关键字 **`template`** 和泛型参数来定义的，这些参数可以在类的成员变量、成员函数或类体中使用。
+
+## 定义模板与模板参数
+
+模板参数包括类型模板参数和非类型模板参数。
+
+- 类型模板参数就是顾名思义，可以适配不同类型的，作为模板的参数；
+- 非类型模板参数就是具体类型的参数，不是作为模板适配不同类型的。
+
+使用关键字 **`template`** 来定义模板，使用关键字**`typename`**来定义类型模板参数，使用对应类型的名称来定义非类型模板参数。如：
+
+```cpp
+template<typename T, int SIZE>
+```
+
+## 函数模板
+
+即使用模板来定义函数。C++ 函数模板允许编写可以适用于不同类型的函数。如：
+
+```cpp
+#include<iostream>
+template<typename T>
+T max(T a,T b){ return(a > b)?a : b;}
+int main()
+{
+    int x  = 5,y  = 10;
+    float p  = 3.14, q  = 2.7;
+    
+    //max()函数被实例化成int max(int a,int b)的形式
+    std::cout<< max(x,y)<< std::endl;   //输出10
+    
+    //max()函数被实例化成int max(float a,float b)的形式
+    std::cout<< max(p,q)<< std::endl;   //输出3.14
+    
+    return 0;
+}
+```
+
+## 类模板
+
+即使用模板来定义类。类模板允许编写可以适用于不同数据类型的类。如：
+
+```cpp
+#include <iostream>
+#include <string>
+
+template <typename T>
+class Stack
+{
+    private:
+        T *data;
+        int size;
+        int capacity;
+
+    public:
+        // 构造函数，初始化容量、大小，分配内存
+        Stack(int cap) : capacity(cap), size(0)
+        {
+            data = new T[capacity];
+        }
+        // 析构函数，释放动态分配的内存，防止内存泄漏
+        ~Stack()
+        {
+            delete[] data;
+        }
+        void push(T element)
+        {
+            if (size < capacity)
+            {
+                data[size++] = element;
+            }
+        }
+        T pop()
+        {
+            if (size == 0)
+            {
+                // 这里根据 T 类型合理返回“空”值，对于基本类型可返回默认构造值，复杂类型可抛异常等，这里简单处理
+                return T();
+            }
+            return data[--size];
+        }
+        bool isEmpty()
+        {
+            return size == 0;
+        }
+    };
+
+int main()
+{
+    // 实例化成整型数的 Stack
+    Stack<int> intStack(5);
+    intStack.push(1);
+    intStack.push(2);
+    intStack.push(3);
+    std::cout << intStack.pop() << std::endl; // 输出 3
+    // 实例化成 std::string 的 Stack
+    Stack<std::string> stringStack(5);
+    stringStack.push("hello");
+    stringStack.push("world");
+    std::cout << stringStack.pop() << std::endl; // 输出 world
+    return 0;
+}
+```
+
+
+
 # 命名空间
 
 [C++——命名空间（namespace）_c++ namespace-CSDN博客](https://blog.csdn.net/m0_49687898/article/details/131350690)
@@ -298,7 +410,7 @@ int main()
 
 引用可以理解为变量的别名，创建引用的时候并没有创建新的变量，引用名和原变量名指向的是同一块内存空间，所对应的变量是同一个东西。
 
-## 语法&简单用法
+## 1 语法&简单用法
 
 假设 `type` 是一种类型，`type`类型的引用类型就是 `type&`， 也就是在类型的后面加一个&符号。
 
@@ -341,9 +453,9 @@ int main(void)
 
 这里的查漏补缺主要是输入，有关不同的输入方式与换行符的读取。
 
-## 标准输入
+## 1 标准输入
 
-### cin
+### 1.1 cin
 
 `std::cin` 就能从输入缓冲区中获得到非空的一行。注意：
 
@@ -368,7 +480,7 @@ int main()
 }
 ```
 
-### getline
+### 1.2 getline
 
 `std::getline` 用于从输入流（如`std::cin`或文件流）中读取一行文本，并将其存储到一个`std::string`对象中。
 
@@ -407,7 +519,7 @@ int main()
 }
 ```
 
-### 混用cin与getline
+### 1.3 混用cin与getline
 
 由于cin、getline的上述特性，因此在混用cin与getline时要注意可能残存在输入缓冲区中的\n。
 
@@ -451,3 +563,58 @@ int main()
 ```
 
 为避免cin后残存在缓冲区的\n对后续getline造成影响，可用 `std::cin.ignore()` 来清除缓冲区，再用getline。
+
+# 内存分配
+
+C++内存分配有栈、堆和静态存储区三种方式。栈自动管理，适用于局部变量；堆手动管理，使用new和delete；静态存储区适用于全局变量，具有整个程序生命周期。
+
+## 栈方式
+
+栈上的内存是自动分配和释放的，由编译器管理。局部变量和函数调用信息存储在栈上，栈指针自动上下移动。栈变量的生命周期与其所在的作用域相同，当变量离开作用域时，它们自动被销毁。如：
+
+```cpp
+#include <iostream>
+
+void stackExample() {
+    int stackVar = 10; // 在栈上分配变量
+    std::cout << "Stack Variable: " << stackVar << std::endl;
+    // stackVar 在函数结束时自动销毁
+}
+
+int main() {
+    stackExample();
+    return 0;
+}
+```
+
+## 堆方式
+
+堆上的内存由程序员手动分配和释放，使用 new 和 delete。堆变量的生命周期由程序员手动控制，需要显式释放内存，否则可能导致内存泄漏。如：
+
+```cpp
+#include <iostream>
+
+int main() {
+    int* heapVar = new int(20); // 在堆上分配变量
+    std::cout << "Heap Variable: " << *heapVar << std::endl;
+    // 需要手动释放堆上的内存
+    delete heapVar;
+    return 0;
+}
+```
+
+## 静态存储区
+
+静态变量在程序运行前分配，程序结束时释放。静态变量和全局变量存储在静态存储区，具有整个程序的生命周期。如：
+
+```cpp
+#include <iostream>
+
+int staticVar = 30; // 静态变量在静态存储区
+
+int main() {
+    std::cout << "Static Variable: " << staticVar << std::endl;
+    return 0;
+}
+```
+
