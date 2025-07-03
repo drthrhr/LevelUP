@@ -1,6 +1,0 @@
-{
-    "files.associations": {
-        "*.asm": "masm",
-        "ostream": "cpp"
-    }
-}
