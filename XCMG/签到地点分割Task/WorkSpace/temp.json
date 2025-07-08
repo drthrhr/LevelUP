@@ -1,0 +1,9 @@
+{'status': 0, 'message': 'ok', 'result_type': 'poi_type', 'query_type': 'precise', 'results': [
+        {'name': '申虹国际大厦', 'location': {'lng': 121.33057573834078, 'lat': 31.20044765354609
+            }, 'address': '上海市闵行区申昆路1500号(虹桥2号航站楼地铁站出口步行280米)', 'province': '上海市', 'city': '上海市', 'area': '闵行区', 'town': '新虹街道', 'town_code': 310112008, 'street_id': 'b292b3aa30cdf12bbe48420f', 'detail': 1, 'uid': 'b292b3aa30cdf12bbe48420f'
+        },
+        {'name': '申虹国际大厦-北楼', 'location': {'lng': 121.33052210950186, 'lat': 31.20090896821701
+            }, 'address': '上海市闵行区新虹街道申昆路1500号', 'province': '上海市', 'city': '上海市', 'area': '闵行区', 'town': '新虹街道', 'town_code': 310112008, 'street_id': '', 'detail': 1, 'uid': '5580cada1a16466884420e8c'
+        }
+    ]
+}
