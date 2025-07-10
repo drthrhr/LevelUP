@@ -33,4 +33,4 @@ if response:
     dataDict = response.json()
     # print(dataDict)
     town = dataDict['results'][0]['town']
-    print(town)
+    print(town, end='')
