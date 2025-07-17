@@ -1,0 +1,40 @@
+                    地点分割_手动
+                    If StrComp(addressCellValue, lastaddressCellValue, vbTextCompare) = 0 Then ' 直接使用上一次的街道值
+                        ws.Cells(i, townCol).Value = ws.Cells(i - 1, townCol).Value
+
+                        ' ws.Cells(i, townCol + 1).Value = "Cached"
+
+                    Else    ' 若不同，则看当前的“详细地址”列的值是否包含“街道”
+                        If InStr(addressCellValue, "街道") > 0 Then ' 若包含“街道”，则写入公式分割地点
+                            ws.Cells(i, townCol).Formula = Replace(formulaTown, "A2", ws.Cells(i, addressCol).Address(0, 0))    ' 写入分割“街道”的公式，并将其中的“A2”替换为当前单元格的相对地址，比如“H4”等
+
+                            ' ws.Cells(i, townCol + 1).Value = "Formulated"
+
+                        Else    ' 若不包含“街道”，则调用python脚本获取街道信息并填入
+                            regionParam = ws.Cells(i, cityCol).Value    ' 查询区域设置为“市”那一列的值
+                            queryParam = addressCellValue & locationCellValue     ' 查询关键词设置为“详细地址”列的值拼接上“地点”列的值
+                            ' 拼接命令并执行python脚本，把python脚本输出的结果写入“街道”列中
+                            shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
+
+                            ' ws.Cells(i, townCol + 1).Value = shellCmd
+
+                            Set exec = shellObj.exec(shellCmd)
+                            result = exec.StdOut.ReadAll
+
+                            If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“详细地址”列的值
+                                queryParam = addressCellValue
+                                shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
+                                Set exec = shellObj.exec(shellCmd)
+                                result = exec.StdOut.ReadAll
+                            End If
+                            If Trim(result) = "" Then   ' 若结果仍为空，则尝试查询关键词只设置为“地点”列的值
+                                queryParam = locationCellValue
+                                shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
+                                Set exec = shellObj.exec(shellCmd)
+                                result = exec.StdOut.ReadAll
+                            End If
+
+                            ws.Cells(i, townCol).Value = result
+                            Set exec = Nothing
+                        End If
+                    End If

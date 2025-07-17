@@ -24,7 +24,8 @@ Sub 地点分割_查漏补缺()
             Set ws = wb.Sheets(1) ' 索引1代表第一个Sheet
 
             '------地点数据定位------
-            Dim i As Integer, j As Integer, addressCol As Integer
+            Dim i As Long
+            Dim j As Integer, addressCol As Integer
             Dim found As Boolean
             Dim cellValue As String
             ' 遍历第4行起的数据（跳过表头）
@@ -132,8 +133,8 @@ Sub 地点分割_查漏补缺()
                                 Set exec = Nothing
                             End If
                         End If
-                    ' 查漏补缺时就不用 lastaddressCellValue 来缓存了
-                    ' lastaddressCellValue = ws.Cells(i, addressCol).Value   ' 更新上一次的“详细地址”值为当前的“详细地址”值
+                        lastaddressCellValue = ws.Cells(i, addressCol).Value   ' 更新上一次的“详细地址”值为当前的“详细地址”值
+                        wb.Save
                     End If
                 Next i
 
@@ -177,7 +178,8 @@ Sub 地点分割_手动()
             Set ws = wb.Sheets(1) ' 索引1代表第一个Sheet
 
             '------地点数据定位------
-            Dim i As Integer, j As Integer, addressCol As Integer
+            Dim i As Long
+            Dim j As Integer, addressCol As Integer
             Dim found As Boolean
             Dim cellValue As String
             ' 遍历第4行起的数据（跳过表头）
@@ -284,6 +286,7 @@ Sub 地点分割_手动()
                         End If
                     End If
                     lastaddressCellValue = ws.Cells(i, addressCol).Value   ' 更新上一次的“详细地址”值为当前的“详细地址”值
+                    wb.Save
                 Next i
 
             Else
@@ -431,7 +434,8 @@ Sub 地点分割WithAutoCloseMsg(Optional ByVal autoCloseMsg As Boolean)
             Set ws = wb.Sheets(1) ' 索引1代表第一个Sheet
 
             '------地点数据定位------
-            Dim i As Integer, j As Integer, addressCol As Integer
+            Dim i As Long
+            Dim j As Integer, addressCol As Integer
             Dim found As Boolean
             Dim cellValue As String
             ' 遍历第4行起的数据（跳过表头）
@@ -538,6 +542,7 @@ Sub 地点分割WithAutoCloseMsg(Optional ByVal autoCloseMsg As Boolean)
                         End If
                     End If
                     lastaddressCellValue = ws.Cells(i, addressCol).Value   ' 更新上一次的“详细地址”值为当前的“详细地址”值
+                    wb.Save
                 Next i
 
             Else
@@ -686,5 +691,6 @@ Sub 地点分割AND表格汇总()
 
     地点分割WithAutoCloseMsg(True)
     表格汇总WithAutoCloseMsg(True)
+    MsgBox "地点分割、表格汇总操作均完成！"
 
 End Sub
