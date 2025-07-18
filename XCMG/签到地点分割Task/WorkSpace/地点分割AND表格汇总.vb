@@ -114,7 +114,7 @@ Sub 地点分割_查漏补缺()
                                 ' ws.Cells(i, townCol + 1).Value = "Formulated"
 
                             Else    ' 若不包含“街道”，则调用python脚本获取街道信息并填入
-                                If IsEmpty(ws.Cells(i, latitudeCol)) <> True AND IsEmpty(ws.Cells(i, longitudeCol)) <> True ' 如果经度和纬度列均不为空，则调用 getTown_GD_useLongitude.py ，以经纬度来查询
+                                If (IsEmpty(ws.Cells(i, latitudeCol)) <> True) And (IsEmpty(ws.Cells(i, longitudeCol)) <> True) Then ' 如果经度和纬度列均不为空，则调用 getTown_GD_useLongitude.py ，以经纬度来查询
                                     
                                     longitudeParam = ws.Cells(i, longitudeCol).Value
                                     latitudeParam = ws.Cells(i, latitudeCol).Value
