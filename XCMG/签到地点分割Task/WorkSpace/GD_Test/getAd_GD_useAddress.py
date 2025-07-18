@@ -24,18 +24,18 @@ response = requests.get(search_poi_url, params=search_poi_params)
 if response:
     dataDict = response.json()
     # print(dataDict)
-    location = dataDict['pois'][0]['location']
-    # print(location)
-    params = {
-    "key": key_jz,
-    "location": location,
-    "output": "json"
-    }
-    response = requests.get(url=reverse_geocoding_url, params=params)
-    if response:
-        dataDict = response.json()
-        # print(dataDict)
-        town = dataDict['regeocode']['addressComponent']['township']
-        print(town, end='')
+    adName = dataDict['pois'][0]['adname']
+    print(adName)
+    # params = {
+    # "key": key_jz,
+    # "location": location,
+    # "output": "json"
+    # }
+    # response = requests.get(url=reverse_geocoding_url, params=params)
+    # if response:
+    #     dataDict = response.json()
+    #     # print(dataDict)
+    #     town = dataDict['regeocode']['addressComponent']['township']
+    #     print(town, end='')
 
 
