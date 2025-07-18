@@ -42,8 +42,11 @@ Sub 地点分割_查漏补缺()
             Next i
 
             ' 若找到地址列则插入3列，并进行后续操作。
+            ' 查漏补缺时不再插入
             If found Then
-                Dim locationCol As Integer, provinceCol As Integer, cityCol As Integer, townCol As Integer
+                Dim locationCol As Integer, provinceCol As Integer, cityCol As Integer, townCol As Integer, longitudeCol As Integer, latitudeCol As Integer
+                longitudeCol = addressCol - 3   ' “经度”列序号
+                latitudeCol = addressCol - 2    ' “纬度”列序号
                 locationCol = addressCol - 1    ' “地点”列序号
                 addressCol = addressCol + 0    ' “详细地址”列序号
                 provinceCol = addressCol + 1    ' “省”列序号
@@ -51,12 +54,10 @@ Sub 地点分割_查漏补缺()
                 townCol = addressCol + 3    ' “街道”列序号
 
                 ' 对“省”、“市”、“街道”列，设置其在第3行的表头信息
-                ws.Cells(1, addressCol + 1).Resize(1, 3).EntireColumn.Insert
-                ' ws.Cells(1, addressCol + 1).Resize(1, 4).EntireColumn.Insert
-                ws.Cells(3, provinceCol).Value = "省"
-                ws.Cells(3, cityCol).Value = "市"
-                ws.Cells(3, townCol).Value = "街道"
-                ' ws.Cells(4, townCol + 1).Value = "DEBUG"
+                ' ws.Cells(1, addressCol + 1).Resize(1, 3).EntireColumn.Insert
+                ' ws.Cells(3, provinceCol).Value = "省"
+                ' ws.Cells(3, cityCol).Value = "市"
+                ' ws.Cells(3, townCol).Value = "街道"
 
                 ' 设置要写入到“省”、“市”、“街道”列的公式模板
                 formulaProvince = "=LEFT(A2,MIN(FIND({""省"",""市"",""区""},A2&""省市区"")))"
@@ -70,10 +71,10 @@ Sub 地点分割_查漏补缺()
 
                 Dim pythonScript As String, shellCmd As String
                 Dim regionParam As String, queryParam As String
+                Dim longitudeParam As String, latitudeParam As String
                 Dim result As String
                 Dim shellObj As Object, exec As Object
-
-                pythonScript = ThisWorkbook.Path & "\getTown.py"
+            
                 Set shellObj = CreateObject("WScript.Shell")
                 lastRow = ws.UsedRange.Rows.Count
                 ' lastRow = 30
@@ -82,20 +83,27 @@ Sub 地点分割_查漏补缺()
                 ' 首先分割“省”、“市”列。
                 ' 接着分割“街道”列。具体来说，就是看该行 addressCol 列的值，若包含“街道”，则写入公式分割地点；否则，调用python脚本获取街道信息并填入
                 lastaddressCellValue = ""   ' 上一次的“详细地址”值在最开始初始化为空字符串
+                lastTownValue = ""
                 For i = 4 To lastRow
                     ' 分别获取该行“地点”、“详细地址”列的值
                     locationCellValue = ws.Cells(i, locationCol).Value
                     addressCellValue = ws.Cells(i, addressCol).Value
 
                     ' 分割“省”、“市”列。写入公式分割地点
-                    ws.Cells(i, provinceCol).Formula = Replace(formulaProvince, "A2", ws.Cells(i, addressCol).Address(0, 0))    ' 写入分割“省”的公式，并将其中的“A2”替换为当前单元格的相对地址，比如“H4”等
-                    ws.Cells(i, cityCol).Formula = Replace(formulaCity, "A2", ws.Cells(i, addressCol).Address(0, 0))    ' 写入分割“市”的公式，并将其中的“A2”替换为当前单元格的相对地址，比如“H4”等
+                    ' 因为是查漏补缺，所以如果是空的再写入，不是空的就不写入了，省得万一之前手动改了啥再覆盖掉
+                    If IsEmpty(ws.Cells(i, provinceCol)) Then
+                        ws.Cells(i, provinceCol).Formula = Replace(formulaProvince, "A2", ws.Cells(i, addressCol).Address(0, 0))    ' 写入分割“省”的公式，并将其中的“A2”替换为当前单元格的相对地址，比如“H4”等
+                    End If
+                    If IsEmpty(ws.Cells(i, cityCol)) Then
+                        ws.Cells(i, cityCol).Formula = Replace(formulaCity, "A2", ws.Cells(i, addressCol).Address(0, 0))    ' 写入分割“市”的公式，并将其中的“A2”替换为当前单元格的相对地址，比如“H4”等
+                    End If
 
                     ' 分割“街道”列。先判断本次的“详细地址”是否与上一次的“详细地址”相同。若相同则可以直接使用上一次的街道值，尽量减少插入公式或调用python脚本的次数以加快速度；若不同，则依据情况选择插入公式或调用python脚本。
                     ' 查漏补缺。只有“街道”列为空时才进行
                     If IsEmpty(ws.Cells(i, townCol)) Then
                         If StrComp(addressCellValue, lastaddressCellValue, vbTextCompare) = 0 Then ' 直接使用上一次的街道值
-                            ws.Cells(i, townCol).Value = ws.Cells(i - 1, townCol).Value
+                            ' ws.Cells(i, townCol).Value = ws.Cells(i - 1, townCol).Value
+                            ws.Cells(i, townCol).Value = lastTownValue
 
                             ' ws.Cells(i, townCol + 1).Value = "Cached"
 
@@ -106,34 +114,46 @@ Sub 地点分割_查漏补缺()
                                 ' ws.Cells(i, townCol + 1).Value = "Formulated"
 
                             Else    ' 若不包含“街道”，则调用python脚本获取街道信息并填入
-                                regionParam = ws.Cells(i, cityCol).Value    ' 查询区域设置为“市”那一列的值
-                                queryParam = addressCellValue & locationCellValue     ' 查询关键词设置为“详细地址”列的值拼接上“地点”列的值
-                                ' 拼接命令并执行python脚本，把python脚本输出的结果写入“街道”列中
-                                shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
+                                If IsEmpty(ws.Cells(i, latitudeCol)) <> True AND IsEmpty(ws.Cells(i, longitudeCol)) <> True ' 如果经度和纬度列均不为空，则调用 getTown_GD_useLongitude.py ，以经纬度来查询
+                                    
+                                    longitudeParam = ws.Cells(i, longitudeCol).Value
+                                    latitudeParam = ws.Cells(i, latitudeCol).Value
 
-                                ' ws.Cells(i, townCol + 1).Value = shellCmd
+                                    ' 拼接命令并执行python脚本，把python脚本输出的结果写入“街道”列中
+                                    ' shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
+                                    pythonScript = ThisWorkbook.Path & "\getTown_GD_useLongitude.py"
+                                    shellCmd = "pythonw " & pythonScript & " " & longitudeParam & " " & latitudeParam
 
-                                Set exec = shellObj.exec(shellCmd)
-                                result = exec.StdOut.ReadAll
-
-                                If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“详细地址”列的值
-                                    queryParam = addressCellValue
-                                    shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
                                     Set exec = shellObj.exec(shellCmd)
                                     result = exec.StdOut.ReadAll
+                                Else    ' 若经纬度信息有空值，则调用 getTown_GD_useAddress.py ,以地址信息来查询
+
+                                    result = ""
                                 End If
-                                If Trim(result) = "" Then   ' 若结果仍为空，则尝试查询关键词只设置为“地点”列的值
-                                    queryParam = locationCellValue
-                                    shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
-                                    Set exec = shellObj.exec(shellCmd)
-                                    result = exec.StdOut.ReadAll
-                                End If
+                                ' regionParam = ws.Cells(i, cityCol).Value    ' 查询区域设置为“市”那一列的值
+                                ' queryParam = addressCellValue & locationCellValue     ' 查询关键词设置为“详细地址”列的值拼接上“地点”列的值
+              
+
+                                ' If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“地点”列的值
+                                '     queryParam = locationCellValue
+                                '     shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
+                                '     Set exec = shellObj.exec(shellCmd)
+                                '     result = exec.StdOut.ReadAll
+                                ' End If
+                                ' If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“详细地址”列的值
+                                '     queryParam = addressCellValue
+                                '     shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
+                                '     Set exec = shellObj.exec(shellCmd)
+                                '     result = exec.StdOut.ReadAll
+                                ' End If
+                                
 
                                 ws.Cells(i, townCol).Value = result
                                 Set exec = Nothing
                             End If
                         End If
                         lastaddressCellValue = ws.Cells(i, addressCol).Value   ' 更新上一次的“详细地址”值为当前的“详细地址”值
+                        lastTownValue = ws.Cells(i, townCol).Value
                         wb.Save
                     End If
                 Next i
@@ -268,14 +288,14 @@ Sub 地点分割_手动()
                             Set exec = shellObj.exec(shellCmd)
                             result = exec.StdOut.ReadAll
 
-                            If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“详细地址”列的值
-                                queryParam = addressCellValue
+                            If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“地点”列的值
+                                queryParam = locationCellValue
                                 shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
                                 Set exec = shellObj.exec(shellCmd)
                                 result = exec.StdOut.ReadAll
                             End If
-                            If Trim(result) = "" Then   ' 若结果仍为空，则尝试查询关键词只设置为“地点”列的值
-                                queryParam = locationCellValue
+                            If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“详细地址”列的值
+                                queryParam = addressCellValue
                                 shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
                                 Set exec = shellObj.exec(shellCmd)
                                 result = exec.StdOut.ReadAll
@@ -524,14 +544,14 @@ Sub 地点分割WithAutoCloseMsg(Optional ByVal autoCloseMsg As Boolean)
                             Set exec = shellObj.exec(shellCmd)
                             result = exec.StdOut.ReadAll
 
-                            If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“详细地址”列的值
-                                queryParam = addressCellValue
+                            If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“地点”列的值
+                                queryParam = locationCellValue
                                 shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
                                 Set exec = shellObj.exec(shellCmd)
                                 result = exec.StdOut.ReadAll
                             End If
-                            If Trim(result) = "" Then   ' 若结果仍为空，则尝试查询关键词只设置为“地点”列的值
-                                queryParam = locationCellValue
+                            If Trim(result) = "" Then   ' 若结果为空，则尝试查询关键词只设置为“详细地址”列的值
+                                queryParam = addressCellValue
                                 shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
                                 Set exec = shellObj.exec(shellCmd)
                                 result = exec.StdOut.ReadAll

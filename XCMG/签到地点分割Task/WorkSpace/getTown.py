@@ -7,7 +7,7 @@ url = "https://api.map.baidu.com/place/v3/region"
 
 # 此处填写你在控制台-应用管理-创建应用后获取的AK
 ak_jz = "ZwZud9nuWcy3JB7olb2TLwB2syQPu13i"
-ak_djn = ""
+ak_djn = "rCM17fD0muJdHmuzgBe6e6AATfXhRTrZ"
 
 # 调用该Python脚本时传入参数： xx市 xxxxxx(地址信息)
 if len(sys.argv) != 3:
