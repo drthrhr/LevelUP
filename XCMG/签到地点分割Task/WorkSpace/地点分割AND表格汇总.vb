@@ -127,8 +127,21 @@ Sub 地点分割_查漏补缺()
                                     Set exec = shellObj.exec(shellCmd)
                                     result = exec.StdOut.ReadAll
                                 Else    ' 若经纬度信息有空值，则调用 getTown_GD_useAddress.py ,以地址信息来查询
+                                    
+                                    If ws.Cells(i, cityCol).Value <> "" Then
+                                        regionParam = ws.Cells(i, cityCol).Value    ' 查询区域设置为“市”那一列的值
+                                    Else
+                                        regionParam = ws.Cells(i, provinceCol).Value    ' 若“市”列为空，则查询区域设置为“省”那一列的值
+                                    End If
+                                    queryParam = addressCellValue & locationCellValue     ' 查询关键词设置为“详细地址”列的值拼接上“地点”列的值
 
-                                    result = ""
+                                    ' 拼接命令并执行python脚本，把python脚本输出的结果写入“街道”列中
+                                    ' shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
+                                    pythonScript = ThisWorkbook.Path & "\getTown_GD_useAddress.py"
+                                    shellCmd = "pythonw " & pythonScript & " " & regionParam & " " & queryParam
+
+                                    Set exec = shellObj.exec(shellCmd)
+                                    result = exec.StdOut.ReadAll
                                 End If
                                 ' regionParam = ws.Cells(i, cityCol).Value    ' 查询区域设置为“市”那一列的值
                                 ' queryParam = addressCellValue & locationCellValue     ' 查询关键词设置为“详细地址”列的值拼接上“地点”列的值

@@ -32,4 +32,4 @@ if response:
     dataDict = response.json()
     # print(dataDict)
     town = dataDict['regeocode']['addressComponent']['township']
-    print(town)
+    print(town, end='')

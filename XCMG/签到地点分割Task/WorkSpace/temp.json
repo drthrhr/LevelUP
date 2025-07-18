@@ -1,9 +1,33 @@
-{'status': 0, 'message': 'ok', 'result_type': 'poi_type', 'query_type': 'precise', 'results': [
-        {'name': '申虹国际大厦', 'location': {'lng': 121.33057573834078, 'lat': 31.20044765354609
-            }, 'address': '上海市闵行区申昆路1500号(虹桥2号航站楼地铁站出口步行280米)', 'province': '上海市', 'city': '上海市', 'area': '闵行区', 'town': '新虹街道', 'town_code': 310112008, 'street_id': 'b292b3aa30cdf12bbe48420f', 'detail': 1, 'uid': 'b292b3aa30cdf12bbe48420f'
+{'count': '10', 'infocode': '10000', 'pois': [
+        {'parent': 'B0FFHR7WLD', 'address': '徐家湾街道红旗西路', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '商务住宅;住宅区;住宅小区', 'typecode': '120302', 'adname': '未央区', 'citycode': '029', 'name': '九如御小区东区', 'location': '108.955170,
+            34.352116', 'id': 'B0FFG7RH6D'
         },
-        {'name': '申虹国际大厦-北楼', 'location': {'lng': 121.33052210950186, 'lat': 31.20090896821701
-            }, 'address': '上海市闵行区新虹街道申昆路1500号', 'province': '上海市', 'city': '上海市', 'area': '闵行区', 'town': '新虹街道', 'town_code': 310112008, 'street_id': '', 'detail': 1, 'uid': '5580cada1a16466884420e8c'
+        {'parent': 'B0FFG7RH6D', 'address': '凤城十路2期9号楼', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '餐饮服务;中餐厅;中餐厅', 'typecode': '050100', 'adname': '未央区', 'citycode': '029', 'name': '九如御美食城(九如御小区东区店)', 'location': '108.954829,
+            34.351245', 'id': 'B0IAJX7Q4X'
+        },
+        {'parent': '', 'address': '开元路与正则路交叉口北120米', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '商务住宅;住宅区;住宅小区', 'typecode': '120302', 'adname': '未央区', 'citycode': '029', 'name': '九如御小区', 'location': '108.954017,
+            34.352051', 'id': 'B0FFHR7WLD'
+        },
+        {'parent': '', 'address': '徐家湾街道九如御二期8号楼友邻便利店', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '生活服务;物流速递;物流速递', 'typecode': '070500', 'adname': '未央区', 'citycode': '029', 'name': '菜鸟驿站(九如御小区东区店)', 'location': '108.955394,
+            34.351917', 'id': 'B0FFIKE8Y1'
+        },
+        {'parent': '', 'address': '九如御小区东区东门旁', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '医疗保健服务;医药保健销售店;药房', 'typecode': '090601', 'adname': '未央区', 'citycode': '029', 'name': '泰生医药(九如御小区东区店)', 'location': '108.956234,
+            34.351654', 'id': 'B0FFI33R52'
+        },
+        {'parent': 'B0FFHR7WLD', 'address': '徐家湾街道凤城十路与开元路交汇处九如御', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '商务住宅;住宅区;住宅小区', 'typecode': '120302', 'adname': '未央区', 'citycode': '029', 'name': '九如御小区西区', 'location': '108.952627,
+            34.351980', 'id': 'B0FFI0S3YA'
+        },
+        {'parent': 'B0FFI0S3YA', 'address': '九如御小区西区西门北110米', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '生活服务;洗浴推拿场所;洗浴推拿场所', 'typecode': '071400', 'adname': '未央区', 'citycode': '029', 'name': '御航足浴(九如御小区西区店)', 'location': '108.951504,
+            34.352294', 'id': 'B0G317YCS7'
+        },
+        {'parent': 'B0FFG7RH6D', 'address': '九如御小区东区北门旁', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '生活服务;生活服务场所;生活服务场所', 'typecode': '070000', 'adname': '未央区', 'citycode': '029', 'name': '起点发型沙龙(九如御小区东区店)', 'location': '108.955333,
+            34.353003', 'id': 'B0FFJFGYN2'
+        },
+        {'parent': '', 'address': '九如御小区东区西门北70米', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '科教文化服务;学校;幼儿园', 'typecode': '141204', 'adname': '未央区', 'citycode': '029', 'name': '西安九如御幼儿园', 'location': '108.954060,
+            34.352175', 'id': 'B0FFL8FIWV'
+        },
+        {'parent': 'B0FFG7RH6D', 'address': '九如御东门', 'distance': '', 'pcode': '610000', 'adcode': '610112', 'pname': '陕西省', 'cityname': '西安市', 'type': '餐饮服务;中餐厅;中餐厅', 'typecode': '050100', 'adname': '未央区', 'citycode': '029', 'name': '白水包子(九如御小区东区店)', 'location': '108.956229,
+            34.351315', 'id': 'B0FFKT3JX4'
         }
-    ]
+    ], 'status': '1', 'info': 'OK'
 }
